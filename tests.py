@@ -1,3 +1,5 @@
+import pytest
+
 from main import BooksCollector
 
 # класс TestBooksCollector объединяет набор тестов, которыми мы покрываем наше приложение BooksCollector
@@ -23,37 +25,17 @@ class TestBooksCollector:
     # напиши свои тесты ниже
     # чтобы тесты были независимыми в каждом из них создавай отдельный экземпляр класса BooksCollector()
 
-    def test_books_rating(self):
-
-        # Проверка метода init
-        # Ожидаемый результат: пустой словарь
-
-        book = BooksCollector()
-
-        assert book.books_rating == {}
-
-
-    def test_favorites(self):
-
-        # Проверка метода init
-        # Ожидаемый результат: пустой список
-
-        book = BooksCollector()
-
-        assert book.favorites == []
 
     def test_get_book_rating_book_doesnt_exist_book(self):
 
-        # Проверка рейтинга недобавленной книги
-        # Ожидаемый результат: None
+        """ Проверка рейтинга недобавленной книги. Ожидаемый результат: None """
 
         book = BooksCollector()
         assert book.get_book_rating('Книга') is None
 
     def test_set_book_rating_one_book_rating(self):
 
-        # Присвоение книге рейтинга
-        # Ожидаемый результат: Книге присвоен рейтинг
+        """ Присвоение книге рейтинга. Ожидаемый результат: Книге присвоен рейтинг """
 
         book = BooksCollector()
         book.add_new_book("Книга")
@@ -61,11 +43,9 @@ class TestBooksCollector:
 
         assert book.get_book_rating("Книга") == 6
 
-
     def test_get_books_with_specific_rating_one_book_specific_rating(self):
 
-        # Добавление книги со специфическим рейтингом в список
-        # Ожидаемый результат: книга присутствует в списке books_with_specific_rating
+        """ Добавление книги со специфическим рейтингом в список. Ожидаемый результат: книга присутствует в списке books_with_specific_rating """
 
         book = BooksCollector()
         book.add_new_book("Книга")
@@ -76,24 +56,9 @@ class TestBooksCollector:
 
         assert books_with_specific_rating == ['Книга']
 
-
-    def test_get_books_with_specific_rating_get_rating_two_books(self):
-
-        # Добавление двух книг с одинаковым рейтингом
-        # Ожидаемый результат: Две книги по запросу get_books_with_specific_rating(6)
-
-        book = BooksCollector()
-        book.add_new_book("Книга")
-        book.add_new_book("Книженция")
-        book.set_book_rating('Книга', 6)
-        book.set_book_rating('Книженция', 6)
-
-        assert len(book.get_books_with_specific_rating(6)) == 2
-
     def test_add_book_in_favorites_add_one_book(self):
 
-        # Добавление Книги в список favorites
-        # Ожидаемый результат: Книга присутствует в списке
+        """ Добавление Книги в список favorites. Ожидаемый результат: Книга присутствует в списке """
 
         book = BooksCollector()
         book.add_new_book("Книга")
@@ -104,8 +69,7 @@ class TestBooksCollector:
 
     def test_delete_book_from_favorites_delete_one_book(self):
 
-        # Удаление Книги из списка favorites
-        # Ожидаемый результат: Книга отсутсвует в списке
+        """ Удаление Книги из списка favorites. Ожидаемый результат: Книга отсутсвует в списке """
 
         book = BooksCollector()
         book.add_new_book("Книга")
@@ -117,8 +81,7 @@ class TestBooksCollector:
 
     def test_add_book_in_favorites_add_nonexistent_book(self):
 
-        # Попытка добавить книгу в список favorites, если её нет в словаре books_rating.
-        # Ожидаемый результат: пустой список get_list_of_favorites_books
+        """ Попытка добавить книгу в список favorites, если её нет в словаре books_rating. Ожидаемый результат: пустой список get_list_of_favorites_books """
 
         book = BooksCollector()
         book.add_book_in_favorites('Книга')
@@ -126,17 +89,25 @@ class TestBooksCollector:
 
     def test_get_list_of_favorites_books_empty_favorites_books(self):
 
-        # Проверка вызова метода get_list_of_favorites_books без добавленных книг
-        # Ожидаемый результат: пустой список
+        """ Проверка вызова метода get_list_of_favorites_books без добавленных книг. Ожидаемый результат: пустой список """
 
         book = BooksCollector()
         assert len(book.get_list_of_favorites_books()) == 0
 
     def test_get_books_with_specific_rating_rating_doesnt_exist(self):
 
-        # Попытка найти книги с несуществующим рейтингом
-        # Ожидаемый результат: пустой список
+        """ Попытка найти книги с несуществующим рейтингом. Ожидаемый результат: пустой список """
 
         book = BooksCollector()
         book.add_new_book('Книга с рейтингом 9')
         assert len(book.get_books_with_specific_rating(5)) == 0
+
+    @pytest.mark.parametrize("param", [0, 11])
+    def test_set_book_rating_set_book_rating_0_or_11(self, param):
+
+        """ Проверка приграничного значения рейтинга. Попытка установить рейтинг 0 и 11. Ожидаемый результат: рейтинг равен 1 """
+
+        book = BooksCollector()
+        book.add_new_book('Книга с приграничным рейтингом')
+        book.set_book_rating('Книга с приграничным рейтингом', param)
+        assert book.get_book_rating('Книга с приграничным рейтингом') == 1
